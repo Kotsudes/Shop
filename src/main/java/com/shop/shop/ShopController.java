@@ -1,15 +1,102 @@
 package com.shop.shop;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 
-public class ShopController {
-    @FXML
-    private Label welcomeText;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
+public class ShopController implements Initializable {
     @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
+    private ListView<String> lvProducts;
+    @FXML
+    private ComboBox<String> cbVue;
+    @FXML
+    private CheckBox cbDiscount;
+    @FXML
+    private Button btnAdd;
+    @FXML
+    private Button btnModify;
+    @FXML
+    private Button btnDelete;
+
+    // Products
+    @FXML
+    private AnchorPane idProductsPane;
+    @FXML
+    private TextField tvNameProduct;
+    @FXML
+    private TextField tvTypeProduct;
+    @FXML
+    private TextField tvStockProduct;
+
+    // Finance
+    @FXML
+    private AnchorPane idFinancePane;
+    @FXML
+    private TextField tvCaptial;
+    @FXML
+    private TextField tvGlobalCost;
+    @FXML
+    private  TextField tvGlobalIncome;
+
+    // Market
+    @FXML
+    private AnchorPane idProductMarket;
+    @FXML
+    private TextField tvSelectedProduct;
+    @FXML
+    private TextField tvProductQuantity;
+
+    public void cbVueInitialize(){
+        List<String> panels = new ArrayList<>();
+        panels.add("Product");
+        panels.add("Finance");
+        panels.add("Market");
+        ObservableList<String> vuePanels = FXCollections.observableArrayList(panels);
+        cbVue.setItems(vuePanels);
+        cbVue.getSelectionModel().selectFirst();
+    }
+
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        cbVueInitialize();
+        cbVue.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String previous, String current) {
+                switch (previous){
+                    case "Product":
+                        idProductsPane.setVisible(false);
+                        break;
+                    case "Finance":
+                        idFinancePane.setVisible(false);
+                        break;
+                    case "Market":
+                        idProductMarket.setVisible(false);
+                        break;
+                }
+                switch (current){
+                    case "Product":
+                        idProductsPane.setVisible(true);
+                        break;
+                    case "Finance":
+                        idFinancePane.setVisible(true);
+                        break;
+                    case "Market":
+                        idProductMarket.setVisible(true);
+                        break;
+                }
+            }
+        });
     }
 }
 
