@@ -1,0 +1,13 @@
+.main {
+  -fx-border-radius: 20;
+  -fx-background-radius: 20;
+  /*-fx-background-color: rgba(215, 238, 244, 0.3);*/
+  -fx-background-color: linear-gradient(from 0.0% 0.0% to 100.0% 100.0%, #477daeB3 0.0%, #ffffffB3 100.0%);
+  -fx-background-insets: 0;
+}
+
+.root {
+  -fx-background-radius: 20;
+  -fx-border-radius: 20;
+  -fx-background-insets: 0;
+}

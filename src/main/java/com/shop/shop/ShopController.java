@@ -1,24 +1,53 @@
 package com.shop.shop;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import com.shop.shop.controller.AccessoriesController;
+import com.shop.shop.controller.AddController;
+import com.shop.shop.controller.ClothesController;
+import com.shop.shop.controller.ShoesController;
+import com.shop.shop.dao.*;
+import com.shop.shop.shopclass.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class ShopController implements Initializable {
+
     @FXML
-    private ListView<String> lvProducts;
+    private Circle btnClose;
     @FXML
-    private ComboBox<String> cbVue;
+    private Circle btnReduce;
+    @FXML
+    private Circle btnEnlarge;
+    @FXML
+    private TableView<productConverter> tbProducts;
+    @FXML
+    public TableColumn<productConverter, Integer> tbColId;
+    @FXML
+    public TableColumn<productConverter, String> tbColName;
+    @FXML
+    public TableColumn<productConverter, Float> tbColPrice;
+    @FXML
+    public TableColumn<productConverter, Integer> tbColEx;
+    @FXML
+    public TableColumn<productConverter, Integer> tbColShoeSize;
+    @FXML
+    public TableColumn<productConverter, Integer> tbColClotheSize;
+    @FXML
+    public TableColumn<productConverter, String> tbColType;
+
+
     @FXML
     private CheckBox cbDiscount;
     @FXML
@@ -30,8 +59,6 @@ public class ShopController implements Initializable {
 
     // Products
     @FXML
-    private AnchorPane idProductsPane;
-    @FXML
     private TextField tvNameProduct;
     @FXML
     private TextField tvTypeProduct;
@@ -39,8 +66,6 @@ public class ShopController implements Initializable {
     private TextField tvStockProduct;
 
     // Finance
-    @FXML
-    private AnchorPane idFinancePane;
     @FXML
     private TextField tvCaptial;
     @FXML
@@ -50,52 +75,189 @@ public class ShopController implements Initializable {
 
     // Market
     @FXML
-    private AnchorPane idProductMarket;
-    @FXML
     private TextField tvSelectedProduct;
     @FXML
     private TextField tvProductQuantity;
+    @FXML
+    private Button btnBuy;
+    @FXML
+    private Button btnSell;
 
-    public void cbVueInitialize(){
-        List<String> panels = new ArrayList<>();
-        panels.add("Product");
-        panels.add("Finance");
-        panels.add("Market");
-        ObservableList<String> vuePanels = FXCollections.observableArrayList(panels);
-        cbVue.setItems(vuePanels);
-        cbVue.getSelectionModel().selectFirst();
+    public void initializeTbProduct(){
+
+        ObservableList<Accessories> accessories = AccessoriesDAO.getAll();
+        ObservableList<Clothes> clothes = ClothesDAO.getAll();
+        ObservableList<Shoes> shoes = ShoesDAO.getAll();
+        ObservableList<productConverter> products = FXCollections.observableArrayList();
+
+        tbColId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        tbColName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tbColPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        tbColEx.setCellValueFactory(new PropertyValueFactory<>("nbItems"));
+        tbColShoeSize.setCellValueFactory(new PropertyValueFactory<>("shoeSize"));
+        tbColClotheSize.setCellValueFactory(new PropertyValueFactory<>("size"));
+        tbColType.setCellValueFactory(new PropertyValueFactory<>("type"));
+
+        assert accessories != null;
+        for (Accessories accessory : accessories) {
+            products.add(new productConverter(accessory.getId(), accessory.getName(), accessory.getPrice(), accessory.getNbItems(), 0, 0, "Accessories"));
+        }
+        assert clothes != null;
+        for (Clothes clothe : clothes) {
+            products.add(new productConverter(clothe.getId(),clothe.getName(), clothe.getPrice(), clothe.getNbItems(), clothe.getSize(), 0,"Clothes"));
+        }
+        assert shoes != null;
+        for (Shoes shoe : shoes) {
+            products.add(new productConverter(shoe.getId(),shoe.getName(), shoe.getPrice(), shoe.getNbItems(), 0, shoe.getShoeSize(),"Shoes"));
+        }
+        tbProducts.setItems(products);
+
+        tbProducts.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
     }
 
+    public Stage showAccessoriesDialog(Accessories accessorie, ShopController shopController) throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource(
+                        "accessories.fxml"
+                )
+        );
+
+        Stage stage = new Stage(StageStyle.TRANSPARENT);
+        stage.setScene(
+                new Scene(loader.load())
+        );
+
+        AccessoriesController controller = loader.getController();
+        controller.initData(accessorie,shopController);
+
+        stage.show();
+        return stage;
+    }
+    public Stage showClothesDialog(Clothes clothe, ShopController shopController) throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource(
+                        "clothes.fxml"
+                )
+        );
+
+        Stage stage = new Stage(StageStyle.TRANSPARENT);
+        stage.setScene(
+                new Scene(loader.load())
+        );
+
+        ClothesController controller = loader.getController();
+        controller.initData(clothe,shopController);
+
+        stage.show();
+        return stage;
+    }
+    public Stage showShoesDialog(Shoes shoe, ShopController shopController) throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource(
+                        "shoes.fxml"
+                )
+        );
+
+        Stage stage = new Stage(StageStyle.TRANSPARENT);
+        stage.setScene(
+                new Scene(loader.load())
+        );
+
+        ShoesController controller = loader.getController();
+        controller.initData(shoe,shopController);
+
+        stage.show();
+        return stage;
+    }
+    public Stage showAddDialog(ShopController shopController) throws IOException {
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource(
+                        "add.fxml"
+                )
+        );
+
+        Stage stage = new Stage(StageStyle.TRANSPARENT);
+        stage.setScene(
+                new Scene(loader.load())
+        );
+
+        AddController controller = loader.getController();
+        controller.initData(shopController);
+
+        stage.show();
+        return stage;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        cbVueInitialize();
-        cbVue.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String previous, String current) {
-                switch (previous){
-                    case "Product":
-                        idProductsPane.setVisible(false);
-                        break;
-                    case "Finance":
-                        idFinancePane.setVisible(false);
-                        break;
-                    case "Market":
-                        idProductMarket.setVisible(false);
-                        break;
-                }
-                switch (current){
-                    case "Product":
-                        idProductsPane.setVisible(true);
-                        break;
-                    case "Finance":
-                        idFinancePane.setVisible(true);
-                        break;
-                    case "Market":
-                        idProductMarket.setVisible(true);
-                        break;
+        initializeTbProduct();
+
+        // Add a listener to the tableview
+        tbProducts.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                tvNameProduct.setText(newSelection.getName());
+                tvTypeProduct.setText(newSelection.getType());
+                tvStockProduct.setText(String.valueOf(newSelection.getNbItems()));
+            }
+        });
+
+        // Add a listener to the Button btnAdd to open a new window to add a new product
+        btnAdd.setOnAction(actionEvent -> {
+            try {
+                showAddDialog(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // Add a listener to the Button btnModify to open a new window to modify the selected product
+        btnModify.setOnAction(actionEvent -> {
+            if (tbProducts.getSelectionModel().getSelectedItem() != null) {
+                productConverter product = tbProducts.getSelectionModel().getSelectedItem();
+                switch (product.getType()) {
+                    case "Clothes" -> {
+                        Clothes clothe = ClothesDAO.get(product.getId());
+                        try {
+                            showClothesDialog(clothe, this);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    case "Shoes" -> {
+                        Shoes shoe = ShoesDAO.get(product.getId());
+                        try {
+                            showShoesDialog(shoe, this);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    case "Accessories" -> {
+                        Accessories accessorie = AccessoriesDAO.get(product.getId());
+                        try {
+                            showAccessoriesDialog(accessorie, this);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }
             }
+        });
+
+        // Add a listener to the Circle btnClose to close the window
+        btnClose.setOnMouseClicked(mouseEvent -> {
+            Stage stage = (Stage) btnClose.getScene().getWindow();
+            stage.close();
+        });
+        // Add a listener to the Circle btnReduce to reduce the window
+        btnReduce.setOnMouseClicked(mouseEvent -> {
+            Stage stage = (Stage) btnReduce.getScene().getWindow();
+            stage.setIconified(true);
+        });
+        // Add a listener to the Circle btnEnlarge to enlarge the window or reduce it to initial size
+        btnEnlarge.setOnMouseClicked(mouseEvent -> {
+            Stage stage = (Stage) btnEnlarge.getScene().getWindow();
+            stage.setMaximized(!stage.isMaximized());
         });
     }
 }

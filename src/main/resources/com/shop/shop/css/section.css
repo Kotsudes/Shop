@@ -1,0 +1,34 @@
+.section {
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-background-color: rgba(217,217,217,0.3);
+}
+
+.list{
+    -fx-background-color: #FFF;
+}
+
+.list .list-cell {
+    -fx-background-color: rgba(255, 248, 248, 0); /* Couleur de fond des cellules */
+    -fx-padding: 10px; /* Espacement intérieur des cellules */
+    -fx-border-color: #e0e0e0; /* Couleur de la bordure des cellules */
+    -fx-border-width: 0 0 1 0; /* Largeur de la bordure des cellules */
+    -fx-font-family: Roboto; /* Police de caractère des cellules */
+    -fx-font-size: 24;
+}
+
+.list .list-cell:selected{
+    -fx-background-color: rgba(80, 80, 80, 0.5); /* Couleur de fond des cellules */
+}
+
+
+.container{
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-background-color: rgba(255, 255, 255, 0.7);
+    -fx-padding: 10;
+}
+
+.button{
+
+}
